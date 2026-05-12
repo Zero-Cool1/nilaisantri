@@ -19,7 +19,8 @@ async function loadCSV() {
         
         allSantri = santriData.map(line => parseSantriLine(line)).filter(s => s !== null);
         document.getElementById('totalSantri').textContent = `Total: ${allSantri.length} santri`;
-        console.log('Sample:', allSantri[0]);
+        console.log('Sample data:', allSantri[0]);
+        console.log('Nilai Map:', allSantri[0]?.nilaiMap);
         return true;
     } catch (error) {
         console.error('Error:', error);
@@ -45,6 +46,9 @@ function parseSantriLine(line) {
         
         if (parts.length < 20) return null;
         
+        // Debug: lihat isi parts
+        console.log('Parts[5]:', parts[5], '| Parts[6]:', parts[6], '| Parts[7]:', parts[7], '| Parts[10]:', parts[10]);
+        
         const peringkat = parts[0] || '';
         const nama = parts[2] || '';
         const nip = parts[3] || '';
@@ -58,21 +62,22 @@ function parseSantriLine(line) {
             sisaEP = p[1] || 0;
             sisaEA_bolos = p[2] || 0;
         } else {
+            // Jika angka tunggal, itu total EA bolos
             sisaEA_bolos = parseInt(jumlahSisaRaw) || 0;
         }
         
-        // Keterangan Bolos per kategori
+        // Keterangan Bolos: parts[5]=EH, parts[6]=EP, parts[7]=EA
         const keteranganEH = parts[5] || '0 EH';
         const keteranganEP = parts[6] || '0 EP';
         const keteranganEA = parts[7] || '0 EA';
         
-        // Status (parts[8])
+        // Status: parts[8]
         const status = parts[8] || '';
         
-        // Sisa Soal EA (parts[9])
+        // Sisa Soal EA: parts[9]
         const sisaSoalEA = parts[9] || '';
         
-        // Final Remark (parts[10])
+        // Final Remark: parts[10]
         const finalRemark = parts[10] || '';
         
         const peringkatSementara = parts[11] || '';
@@ -107,9 +112,15 @@ function parseSantriLine(line) {
         
         const displayName = parts[1] || '';
         let title = '';
-        if (displayName) { const m = displayName.match(/\|\s*(.+?)\s*•/); if (m) title = m[1].trim(); }
+        if (displayName) { 
+            const m = displayName.match(/\|\s*(.+?)\s*•/); 
+            if (m) title = m[1].trim(); 
+        }
         let gradeAkhir = '';
-        if (displayName) { const m = displayName.match(/\|\s*(.+?)\s*\|/); if (m) gradeAkhir = m[1].trim(); }
+        if (displayName) { 
+            const m = displayName.match(/\|\s*(.+?)\s*\|/); 
+            if (m) gradeAkhir = m[1].trim(); 
+        }
         
         return {
             peringkat, nama, nip, title, gradeAkhir, status,
@@ -119,7 +130,10 @@ function parseSantriLine(line) {
             nilaiSementara, nilaiAkhir, skorSementara, skorAkhir, maxSkor,
             totalDurasi, nilaiMap, finalRemark
         };
-    } catch (e) { console.error('Parse error:', e); return null; }
+    } catch (e) { 
+        console.error('Parse error:', e); 
+        return null; 
+    }
 }
 
 function searchSantri() {
@@ -149,7 +163,11 @@ function displaySuggestions(results) {
 
 function selectSantri(index) {
     const s = window._searchResults[index];
-    if (s) { document.getElementById('searchInput').value = s.nama; document.getElementById('suggestions').innerHTML = ''; displayResult(s); }
+    if (s) { 
+        document.getElementById('searchInput').value = s.nama; 
+        document.getElementById('suggestions').innerHTML = ''; 
+        displayResult(s); 
+    }
 }
 
 function displayResult(s) {
@@ -166,10 +184,16 @@ function displayResult(s) {
         return `<span style="font-weight:600;">${st}</span>`;
     };
     
+    // Final Remark dari parts[10]
     const getFinalRemarkHTML = (remark) => {
         if (!remark) return '';
-        const r = remark.toLowerCase();
-        if (r.includes('lanjut') || r.includes('lulus') || r.includes('mumtaz') || r.includes('jayyid') || r.includes('maqbul')) {
+        const r = remark.trim();
+        const rl = r.toLowerCase();
+        
+        // Deteksi "Lanjut" atau status lulus
+        if (rl.includes('lanjut') || rl.includes('lulus') || 
+            rl.includes('mumtaz') || rl.includes('jayyid') || rl.includes('maqbul') ||
+            r === 'Lanjut') {
             return `
                 <div class="final-remark lanjut">
                     <div class="final-remark-icon">🎉</div>
@@ -177,19 +201,32 @@ function displayResult(s) {
                     <div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div>
                     <div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div>
                 </div>`;
-        } else if (r.includes('belum') || r.includes('harus')) {
+        }
+        
+        // Deteksi "Belum EA"
+        if (rl.includes('belum')) {
             return `
                 <div class="final-remark belum">
                     <div class="final-remark-title">Belum EA</div>
                 </div>`;
         }
+        
+        // Default: tampilkan apa adanya
+        if (r) {
+            return `
+                <div class="final-remark default-remark">
+                    <div class="final-remark-title">${r}</div>
+                </div>`;
+        }
+        
         return '';
     };
     
     const durasiDetik = parseFloat(s.totalDurasi);
     const formatDurasi = (d) => {
         if (isNaN(d)) return s.totalDurasi + ' detik';
-        const m = Math.floor(d / 60); const det = Math.round(d % 60);
+        const m = Math.floor(d / 60); 
+        const det = Math.round(d % 60);
         if (m > 0) return `${m}m ${det}d (${d.toLocaleString('id-ID')} detik)`;
         return `${d.toLocaleString('id-ID')} detik`;
     };
@@ -197,20 +234,45 @@ function displayResult(s) {
     let html = `
     <div class="result-card">
         <div class="santri-header">
-            <div><div class="santri-name">${s.nama}</div><div class="nip-info">NIP: ${s.nip}</div></div>
-            <div class="santri-rank"><span class="peringkat">Peringkat</span> ${s.peringkat}${s.peringkatAkhir ? `<br><span style="font-size:0.85em">${s.peringkatAkhir}</span>` : ''}</div>
+            <div>
+                <div class="santri-name">${s.nama}</div>
+                <div class="nip-info">NIP: ${s.nip}</div>
+            </div>
+            <div class="santri-rank">
+                <span class="peringkat">Peringkat</span> ${s.peringkat}
+                ${s.peringkatAkhir ? `<br><span style="font-size:0.85em">${s.peringkatAkhir}</span>` : ''}
+            </div>
         </div>
         
         <div class="nilai-utama">
-            <div class="nilai-box utama"><div class="nilai-box-label">📊 Nilai Sementara</div><div class="nilai-box-value ${getNilaiColor(s.nilaiSementara)}">${s.nilaiSementara.toFixed(2)}</div></div>
-            <div class="nilai-box utama"><div class="nilai-box-label">🏆 Nilai Akhir</div><div class="nilai-box-value ${getNilaiColor(s.nilaiAkhir)}">${s.nilaiAkhir.toFixed(2)}</div></div>
-            <div class="nilai-box utama"><div class="nilai-box-label">📝 Sisa Soal EA</div><div class="nilai-box-value medium">${s.sisaSoalEA || '-'}</div><div class="nilai-box-sub">Status: ${getStatusHTML(s.status)}</div></div>
+            <div class="nilai-box utama">
+                <div class="nilai-box-label">📊 Nilai Sementara</div>
+                <div class="nilai-box-value ${getNilaiColor(s.nilaiSementara)}">${s.nilaiSementara.toFixed(2)}</div>
+            </div>
+            <div class="nilai-box utama">
+                <div class="nilai-box-label">🏆 Nilai Akhir</div>
+                <div class="nilai-box-value ${getNilaiColor(s.nilaiAkhir)}">${s.nilaiAkhir.toFixed(2)}</div>
+            </div>
+            <div class="nilai-box utama">
+                <div class="nilai-box-label">📝 Sisa Soal EA</div>
+                <div class="nilai-box-value medium">${s.sisaSoalEA || '-'}</div>
+                <div class="nilai-box-sub">Status: ${getStatusHTML(s.status)}</div>
+            </div>
             <div class="nilai-box bolos-box">
                 <div class="nilai-box-label">⚠️ Keterangan Bolos</div>
                 <div class="bolos-detail">
-                    <div class="bolos-item"><div class="bolos-label">EH</div><div class="bolos-value ${s.sisaEH===0?'nol':''}">${s.keteranganEH || '0 EH'}</div></div>
-                    <div class="bolos-item"><div class="bolos-label">EP</div><div class="bolos-value ${s.sisaEP===0?'nol':''}">${s.keteranganEP || '0 EP'}</div></div>
-                    <div class="bolos-item"><div class="bolos-label">EA</div><div class="bolos-value ${s.sisaEA_bolos===0?'nol':''}">${s.keteranganEA || '0 EA'}</div></div>
+                    <div class="bolos-item">
+                        <div class="bolos-label">EH</div>
+                        <div class="bolos-value ${(s.keteranganEH.includes('0 EH') || s.keteranganEH === '0 EH') ? 'nol' : ''}">${s.keteranganEH}</div>
+                    </div>
+                    <div class="bolos-item">
+                        <div class="bolos-label">EP</div>
+                        <div class="bolos-value ${(s.keteranganEP.includes('0 EP') || s.keteranganEP === '0 EP') ? 'nol' : ''}">${s.keteranganEP}</div>
+                    </div>
+                    <div class="bolos-item">
+                        <div class="bolos-label">EA</div>
+                        <div class="bolos-value ${(s.keteranganEA.includes('0 EA') || s.keteranganEA === '0 EA') ? 'nol' : ''}">${s.keteranganEA}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,6 +287,7 @@ function displayResult(s) {
                 <div class="detail-item"><span class="detail-label">Total Durasi</span><span class="detail-value">${formatDurasi(durasiDetik)}</span></div>
             </div>
         </div>
+        
         <div class="list-nilai-section">
             <h3>📝 Nilai Santri ARN251 G15 <span style="font-size:0.7em;color:#5a8fa8;font-weight:400;">(Klik Kotak)</span></h3>
             <div class="nilai-buttons">${buildNilaiButtons(s.nilaiMap)}</div>
@@ -237,14 +300,25 @@ function displayResult(s) {
 }
 
 function buildNilaiButtons(nilaiMap) {
-    const urutanCSV = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
+    const urutanCSV = [
+        'EH01','EH02','EH03','EH04','EH05','EP1',
+        'EH06','EH07','EH08','EH09','EH10','EP2',
+        'EH11','EH12','EH13','EH14','EH15','EP3',
+        'EH16','EH17','EH18','EH19','EH20','EP4',
+        'EH21','EH22','EH23','EH24','EH25','EP5',
+        'EA'
+    ];
     let html = '';
     urutanCSV.forEach(label => {
         const nilai = nilaiMap[label];
         let cls = 'nilai-btn';
         let onclick = '';
-        if (nilai === null || nilai === undefined) { cls += ' kosong'; }
-        else { onclick = `onclick="klikNilai(this,'${label}',${nilai})"`; cls += ' ada-nilai'; }
+        if (nilai === null || nilai === undefined) { 
+            cls += ' kosong'; 
+        } else { 
+            onclick = `onclick="klikNilai(this,'${label}',${nilai})"`; 
+            cls += ' ada-nilai'; 
+        }
         html += `<button class="${cls}" ${onclick} data-label="${label}" data-nilai="${nilai !== null ? nilai : ''}">${label}</button>`;
     });
     return html;
@@ -274,9 +348,16 @@ function klikNilai(btn, label, nilai) {
 document.getElementById('searchInput').addEventListener('input', function(e) {
     const t = e.target.value.trim();
     if (t.length >= 2) searchSantri();
-    else { document.getElementById('result').style.display = 'none'; document.getElementById('suggestions').innerHTML = ''; }
+    else { 
+        document.getElementById('result').style.display = 'none'; 
+        document.getElementById('suggestions').innerHTML = ''; 
+    }
 });
-document.getElementById('searchInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') searchSantri(); });
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) { 
+    if (e.key === 'Enter') searchSantri(); 
+});
+
 window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loading').style.display = 'block';
     const ok = await loadCSV();
