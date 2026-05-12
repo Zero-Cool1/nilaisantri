@@ -29,10 +29,10 @@ body {
 .header-icon {
     font-size: 3em;
     margin-bottom: 5px;
-    animation: bounce 2s infinite;
+    animation: bounceIcon 2s infinite;
 }
 
-@keyframes bounce {
+@keyframes bounceIcon {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
 }
@@ -255,7 +255,66 @@ button:hover {
     color: #22a06b;
 }
 
-/* Info */
+/* ========== FINAL REMARK ========== */
+.final-remark {
+    margin-bottom: 20px;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    animation: fadeIn 0.8s;
+}
+
+.final-remark.lanjut {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    border: 3px solid #22a06b;
+    box-shadow: 0 5px 20px rgba(34,160,107,0.3);
+}
+
+.final-remark-icon {
+    font-size: 3em;
+    animation: bounceEmoji 2s infinite;
+}
+
+.final-remark-title {
+    font-size: 2em;
+    font-weight: 800;
+    color: #1b5e20;
+    margin: 5px 0;
+    letter-spacing: 2px;
+}
+
+.final-remark-text {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 5px 0;
+}
+
+.final-remark-doaa {
+    font-size: 1em;
+    font-weight: 500;
+    color: #1a5f7a;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.final-remark.belum {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 3px solid #e5942e;
+}
+
+.final-remark.belum .final-remark-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #e65100;
+}
+
+@keyframes bounceEmoji {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Info Detail */
 .info-detail {
     background: white;
     padding: 20px;
@@ -417,4 +476,6 @@ button:hover {
     .nilai-utama { grid-template-columns: 1fr; }
     .nilai-box-value { font-size: 1.8em; }
     .nilai-btn { width: 30px; height: 26px; font-size: 0.55em; }
+    .final-remark-title { font-size: 1.5em; }
+    .final-remark-text { font-size: 1em; }
 }

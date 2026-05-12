@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nilai-hsi-v1';
+const CACHE_NAME = 'nilai-hsi-v2';
 const urlsToCache = [
     '/',
     '/index.html',
