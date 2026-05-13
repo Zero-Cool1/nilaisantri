@@ -1,50 +1,21 @@
-const CACHE_NAME = 'nilai-hsi-v2';
-const urlsToCache = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/script.js',
-    '/data.csv',
-    '/manifest.json'
-];
-
-self.addEventListener('install', function(event) {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(function(cache) {
-            console.log('✅ Cache opened');
-            return cache.addAll(urlsToCache);
-        })
-    );
-});
-
+const CACHE_NAME = 'nilai-hsi-v5';
+self.addEventListener('install', function(event) { self.skipWaiting(); });
 self.addEventListener('fetch', function(event) {
+    if (!event.request.url.startsWith('http')) return;
     event.respondWith(
-        caches.match(event.request).then(function(response) {
-            if (response) return response;
+        caches.match(event.request).then(function(cached) {
+            if (cached) return cached;
             return fetch(event.request).then(function(response) {
-                if (!response || response.status !== 200 || response.type !== 'basic') {
-                    return response;
+                if (!response || response.status !== 200) return response;
+                if (event.request.url.startsWith('https://') || event.request.url.startsWith('http://')) {
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, clone); });
                 }
-                var responseToCache = response.clone();
-                caches.open(CACHE_NAME).then(function(cache) {
-                    cache.put(event.request, responseToCache);
-                });
                 return response;
-            });
+            }).catch(function() { return caches.match('/'); });
         })
     );
 });
-
 self.addEventListener('activate', function(event) {
-    event.waitUntil(
-        caches.keys().then(function(cacheNames) {
-            return Promise.all(
-                cacheNames.filter(function(name) {
-                    return name !== CACHE_NAME;
-                }).map(function(name) {
-                    return caches.delete(name);
-                })
-            );
-        })
-    );
+    event.waitUntil(caches.keys().then(function(names) { return Promise.all(names.map(function(n) { return caches.delete(n); })); }).then(function() { return self.clients.claim(); }));
 });

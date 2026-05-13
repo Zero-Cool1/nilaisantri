@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nilai Santri ARN251 G15</title>
     
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#1a5f7a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,10 +12,7 @@
     <meta name="apple-mobile-web-app-title" content="Nilai HSI">
     <meta name="description" content="Pencarian Nilai Santri ARN251 G15 - SILSILAH 7">
     
-    <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- Favicon & Apple Icon (Toga Hijau) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
         <rect fill='%2322a06b' width='512' height='512' rx='100'/>
@@ -43,25 +39,17 @@
         </div>
 
         <div class="search-box">
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Ketik nama santri..." 
-                autocomplete="off"
-            >
+            <input type="text" id="searchInput" placeholder="Ketik nama santri..." autocomplete="off">
             <button onclick="searchSantri()">🔍 Cari</button>
         </div>
 
         <div id="totalSantri" class="total-info"></div>
         <div id="suggestions" class="suggestions"></div>
         <div id="result" class="result"></div>
-        <div id="loading" class="loading" style="display: none;">
-            <p>⏳ Memuat data...</p>
-        </div>
+        <div id="loading" class="loading" style="display: none;"><p>⏳ Memuat data...</p></div>
         <div id="error" class="error" style="display: none;"></div>
     </div>
 
-    <!-- Install Prompt -->
     <div id="installPrompt" class="install-prompt" style="display: none;">
         <div class="install-prompt-content">
             <div class="install-icon">🎓</div>
@@ -71,25 +59,18 @@
         </div>
     </div>
 
-    <!-- Register Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(() => console.log('✅ Service Worker registered'))
-                    .catch(err => console.log('SW: offline mode'));
+                navigator.serviceWorker.register('sw.js').catch(() => {});
             });
         }
-        
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            setTimeout(() => {
-                document.getElementById('installPrompt').style.display = 'flex';
-            }, 2000);
+            setTimeout(() => { document.getElementById('installPrompt').style.display = 'flex'; }, 2000);
         });
-        
         function installApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -98,15 +79,9 @@
                 });
             }
         }
-        
         function closeInstallPrompt() {
             document.getElementById('installPrompt').style.display = 'none';
         }
-        
-        window.addEventListener('appinstalled', () => {
-            document.getElementById('installPrompt').style.display = 'none';
-            console.log('✅ App installed');
-        });
     </script>
 
     <script src="script.js"></script>
