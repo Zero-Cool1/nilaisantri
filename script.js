@@ -130,12 +130,14 @@ function displayResult(s) {
 
     const remark = (s.finalRemark || '').trim().toLowerCase();
     let finalRemarkHTML = '';
-    if (remark.includes('belum')) {
+    if (remark.includes('gugur') || remark.includes('tidak lulus')) {
+        finalRemarkHTML = `<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>`;
+    } else if (remark.includes('belum')) {
         finalRemarkHTML = `<div class="final-remark belum"><div class="final-remark-title">Belum EA</div></div>`;
     } else if (remark !== '') {
-        finalRemarkHTML = `<div class="final-remark lanjut"><div class="final-remark-icon">🎉</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>`;
+        finalRemarkHTML = `<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>`;
+    
     }
-
     const getAngka = (str) => { const m = (str || '').trim().match(/^(\d+)/); return m ? parseInt(m[1]) : 0; };
     const ehNol = getAngka(s.keteranganEH) === 0;
     const epNol = getAngka(s.keteranganEP) === 0;
