@@ -2,9 +2,10 @@ let allSantri = [];
 
 async function loadCSV() {
     try {
-// Tambahkan timestamp agar browser tidak pakai cache
-const timestamp = new Date().getTime();
-const response = await fetch('data.csv?v=' + timestamp, {
+        const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?output=csv';
+        
+        const timestamp = new Date().getTime();
+        const response = await fetch(GOOGLE_SHEETS_URL + '&t=' + timestamp, {
     cache: 'no-cache',
     headers: {
         'Cache-Control': 'no-cache',
