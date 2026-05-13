@@ -2,8 +2,15 @@ let allSantri = [];
 
 async function loadCSV() {
     try {
-        const response = await fetch('data.csv');
-        const csvText = await response.text();
+// Tambahkan timestamp agar browser tidak pakai cache
+const timestamp = new Date().getTime();
+const response = await fetch('data.csv?v=' + timestamp, {
+    cache: 'no-cache',
+    headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+    }
+});        const csvText = await response.text();
         const lines = csvText.split('\n');
         const santriData = [];
         for (let i = 0; i < lines.length; i++) {
