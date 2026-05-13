@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nilai-hsi-v6';
+const CACHE_NAME = 'nilai-hsi-v7';
 
 self.addEventListener('install', function(event) {
     self.skipWaiting();
@@ -15,12 +15,12 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-    // JANGAN cache data.csv - selalu ambil dari network
-    if (event.request.url.includes('data.csv')) {
-        event.respondWith(
-            fetch(event.request, { cache: 'no-cache' })
-        );
-        return;
+    // JANGAN cache Google Sheets
+    if (event.request.url.includes('googleapis.com') || 
+        event.request.url.includes('google.com') ||
+        event.request.url.includes('spreadsheets') ||
+        event.request.url.includes('pub?output=csv')) {
+        return; // Biarkan browser fetch langsung
     }
     
     if (!event.request.url.startsWith('http')) return;
