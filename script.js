@@ -19,8 +19,14 @@ async function loadCSV() {
         
         allSantri = santriData.map(line => parseSantriLine(line)).filter(s => s !== null);
         document.getElementById('totalSantri').textContent = `Total: ${allSantri.length} santri`;
-        console.log('Sample data:', allSantri[0]);
-        console.log('Nilai Map:', allSantri[0]?.nilaiMap);
+        
+        if (allSantri.length > 0) {
+            const d = allSantri[0];
+            console.log('📋 Data Pertama:', d.nama);
+            console.log('📝 Final Remark (parts[10]):', JSON.stringify(d.finalRemark));
+            console.log('🔴 EH:', d.keteranganEH, '| EP:', d.keteranganEP, '| EA:', d.keteranganEA);
+        }
+        
         return true;
     } catch (error) {
         console.error('Error:', error);
@@ -46,25 +52,9 @@ function parseSantriLine(line) {
         
         if (parts.length < 20) return null;
         
-        // Debug: lihat isi parts
-        console.log('Parts[5]:', parts[5], '| Parts[6]:', parts[6], '| Parts[7]:', parts[7], '| Parts[10]:', parts[10]);
-        
         const peringkat = parts[0] || '';
         const nama = parts[2] || '';
         const nip = parts[3] || '';
-        
-        // Jumlah Sisa/Bolos total (parts[4])
-        const jumlahSisaRaw = parts[4] || '0';
-        let sisaEH = 0, sisaEP = 0, sisaEA_bolos = 0;
-        if (jumlahSisaRaw.includes(',')) {
-            const p = jumlahSisaRaw.split(',').map(s => parseInt(s) || 0);
-            sisaEH = p[0] || 0;
-            sisaEP = p[1] || 0;
-            sisaEA_bolos = p[2] || 0;
-        } else {
-            // Jika angka tunggal, itu total EA bolos
-            sisaEA_bolos = parseInt(jumlahSisaRaw) || 0;
-        }
         
         // Keterangan Bolos: parts[5]=EH, parts[6]=EP, parts[7]=EA
         const keteranganEH = parts[5] || '0 EH';
@@ -124,8 +114,7 @@ function parseSantriLine(line) {
         
         return {
             peringkat, nama, nip, title, gradeAkhir, status,
-            sisaSoalEA, sisaEH, sisaEP, sisaEA_bolos,
-            keteranganEH, keteranganEP, keteranganEA,
+            sisaSoalEA, keteranganEH, keteranganEP, keteranganEA,
             peringkatSementara, peringkatAkhir: peringkatAkhir || gradeAkhir,
             nilaiSementara, nilaiAkhir, skorSementara, skorAkhir, maxSkor,
             totalDurasi, nilaiMap, finalRemark
@@ -184,44 +173,6 @@ function displayResult(s) {
         return `<span style="font-weight:600;">${st}</span>`;
     };
     
-    // Final Remark dari parts[10]
-    const getFinalRemarkHTML = (remark) => {
-        if (!remark) return '';
-        const r = remark.trim();
-        const rl = r.toLowerCase();
-        
-        // Deteksi "Lanjut" atau status lulus
-        if (rl.includes('lanjut') || rl.includes('lulus') || 
-            rl.includes('mumtaz') || rl.includes('jayyid') || rl.includes('maqbul') ||
-            r === 'Lanjut') {
-            return `
-                <div class="final-remark lanjut">
-                    <div class="final-remark-icon">🎉</div>
-                    <div class="final-remark-title">SELAMAT</div>
-                    <div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div>
-                    <div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div>
-                </div>`;
-        }
-        
-        // Deteksi "Belum EA"
-        if (rl.includes('belum')) {
-            return `
-                <div class="final-remark belum">
-                    <div class="final-remark-title">Belum EA</div>
-                </div>`;
-        }
-        
-        // Default: tampilkan apa adanya
-        if (r) {
-            return `
-                <div class="final-remark default-remark">
-                    <div class="final-remark-title">${r}</div>
-                </div>`;
-        }
-        
-        return '';
-    };
-    
     const durasiDetik = parseFloat(s.totalDurasi);
     const formatDurasi = (d) => {
         if (isNaN(d)) return s.totalDurasi + ' detik';
@@ -230,6 +181,39 @@ function displayResult(s) {
         if (m > 0) return `${m}m ${det}d (${d.toLocaleString('id-ID')} detik)`;
         return `${d.toLocaleString('id-ID')} detik`;
     };
+    
+    // FINAL REMARK
+    const remark = (s.finalRemark || '').trim().toLowerCase();
+    let finalRemarkHTML = '';
+    
+    if (remark.includes('belum')) {
+        finalRemarkHTML = `
+            <div class="final-remark belum">
+                <div class="final-remark-title">Belum EA</div>
+            </div>`;
+    } else if (remark !== '') {
+        finalRemarkHTML = `
+            <div class="final-remark lanjut">
+                <div class="final-remark-icon">🎉</div>
+                <div class="final-remark-title">SELAMAT</div>
+                <div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div>
+                <div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div>
+            </div>`;
+    }
+    
+    // CEK BOLOS - ambil angka pertama
+    const getAngkaBolos = (str) => {
+        const match = (str || '').trim().match(/^(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+    };
+    
+    const ehAngka = getAngkaBolos(s.keteranganEH);
+    const epAngka = getAngkaBolos(s.keteranganEP);
+    const eaAngka = getAngkaBolos(s.keteranganEA);
+    
+    const ehIsNol = ehAngka === 0;
+    const epIsNol = epAngka === 0;
+    const eaIsNol = eaAngka === 0;
     
     let html = `
     <div class="result-card">
@@ -263,21 +247,21 @@ function displayResult(s) {
                 <div class="bolos-detail">
                     <div class="bolos-item">
                         <div class="bolos-label">EH</div>
-                        <div class="bolos-value ${(s.keteranganEH.includes('0 EH') || s.keteranganEH === '0 EH') ? 'nol' : ''}">${s.keteranganEH}</div>
+                        <div class="bolos-value ${ehIsNol ? 'nol' : ''}">${s.keteranganEH}</div>
                     </div>
                     <div class="bolos-item">
                         <div class="bolos-label">EP</div>
-                        <div class="bolos-value ${(s.keteranganEP.includes('0 EP') || s.keteranganEP === '0 EP') ? 'nol' : ''}">${s.keteranganEP}</div>
+                        <div class="bolos-value ${epIsNol ? 'nol' : ''}">${s.keteranganEP}</div>
                     </div>
                     <div class="bolos-item">
                         <div class="bolos-label">EA</div>
-                        <div class="bolos-value ${(s.keteranganEA.includes('0 EA') || s.keteranganEA === '0 EA') ? 'nol' : ''}">${s.keteranganEA}</div>
+                        <div class="bolos-value ${eaIsNol ? 'nol' : ''}">${s.keteranganEA}</div>
                     </div>
                 </div>
             </div>
         </div>
         
-        ${getFinalRemarkHTML(s.finalRemark)}
+        ${finalRemarkHTML}
         
         <div class="info-detail">
             <div class="detail-grid">
@@ -362,5 +346,4 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loading').style.display = 'block';
     const ok = await loadCSV();
     document.getElementById('loading').style.display = 'none';
-    if (ok) console.log('✅ Siap - PWA ready');
 });
