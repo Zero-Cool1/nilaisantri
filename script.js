@@ -53,18 +53,18 @@ const JADWAL = [
 
 // ============================================================
 
-async function loadCSV() {
+aasync function loadCSV() {
     try {
         const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?output=csv';
-        const unique = Date.now() + '-' + Math.random().toString(36).substring(7);
-        const url = GOOGLE_SHEETS_URL + '&cache=' + unique;
         
-        const response = await fetch(url, {
-            cache: 'no-store'
-        });
+        // Hapus cache buster & headers untuk hindari CORS
+        const response = await fetch(GOOGLE_SHEETS_URL);
         
         if (!response.ok) throw new Error('Gagal fetch: ' + response.status);
         const csvText = await response.text();
+        
+        console.log('📥 Data fetched, length:', csvText.length);
+        
         const lines = csvText.split('\n');
         const santriData = [];
         for (let i = 0; i < lines.length; i++) {
@@ -75,6 +75,7 @@ async function loadCSV() {
         }
         allSantri = santriData.map(line => parseSantriLine(line)).filter(s => s !== null);
         document.getElementById('totalSantri').textContent = `Total: ${allSantri.length} santri`;
+        console.log('✅ Data siap:', allSantri.length, 'santri');
         return true;
     } catch (error) {
         console.error('Error:', error);
