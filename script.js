@@ -113,8 +113,7 @@ function formatTanggal(isoString) {
     var d = new Date(isoString);
     var hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
     var bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    return hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear() + ' jam ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-}
+    return hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear() + ' jam ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ' WIB';}
 
 function getNotifBelum(kode) {
     var status = getJadwalStatus(kode);
