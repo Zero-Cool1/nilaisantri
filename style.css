@@ -45,7 +45,7 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
 .santri-name { font-size: 1.6em; color: #1a5f7a; font-weight: 700; }
 .santri-rank { background: #22a06b; color: white; padding: 8px 18px; border-radius: 20px; font-size: 1em; font-weight: 600; text-align: center; }
 .santri-rank .peringkat { font-size: 0.8em; opacity: 0.9; }
-.nip-info { color: #5a8fa8; font-size: 0.9em; margin-bottom: 20px; }
+.nip-info { color: #5a8fa8; font-size: 0.9em; }
 
 .nilai-utama { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
 .nilai-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
@@ -64,25 +64,30 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
 .bolos-value { font-weight: 700; color: #d14343; font-size: 1.1em; }
 .bolos-value.nol { color: #22a06b; }
 
-.final-remark { margin-bottom: 20px; border-radius: 15px; padding: 25px; text-align: center; animation: fadeIn 0.8s; }
-.final-remark.lanjut { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%); border: 3px solid #22a06b; box-shadow: 0 5px 20px rgba(34,160,107,0.3); }
+/* NOTIF */
+.notif { margin-bottom: 20px; border-radius: 15px; padding: 20px 25px; text-align: center; animation: fadeIn 0.5s; }
+.notif.warning { background: linear-gradient(135deg, #fff8e1, #ffecb3); border: 3px solid #ff9800; }
+.notif.danger { background: linear-gradient(135deg, #ffebee, #ffcdd2); border: 3px solid #f44336; }
+.notif.info { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 3px solid #2196f3; }
+.notif.success { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 3px solid #22a06b; }
+.notif.success .notif-title { color: #1b5e20; }
+.notif.success .notif-text { color: #2e7d32; font-weight: 600; }
+.notif-icon { font-size: 2.5em; margin-bottom: 5px; }
+.notif-title { font-size: 1.5em; font-weight: 700; color: #333; margin: 5px 0; }
+.notif-text { font-size: 1em; color: #555; margin: 5px 0; }
+.notif-btn { display: inline-block; margin-top: 10px; padding: 10px 25px; background: #22a06b; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1em; transition: all 0.3s; }
+.notif-btn:hover { background: #1a7f54; transform: scale(1.05); }
+.notif-deadline { font-size: 0.85em; color: #888; margin-top: 8px; }
+
+/* FINAL REMARK */
+.final-remark { margin-bottom: 20px; border-radius: 15px; padding: 25px; text-align: center; animation: fadeIn 0.5s; }
+.final-remark.lanjut { background: linear-gradient(135deg, #e8f5e9, #c8e6c9, #a5d6a7); border: 3px solid #22a06b; }
+.final-remark.gugur { background: linear-gradient(135deg, #ffebee, #ffcdd2); border: 3px solid #d14343; }
 .final-remark-icon { font-size: 3em; animation: bounceEmoji 2s infinite; }
-.final-remark-title { font-size: 2em; font-weight: 800; color: #1b5e20; margin: 5px 0; letter-spacing: 2px; }
-.final-remark-text { font-size: 1.2em; font-weight: 600; color: #2e7d32; margin: 5px 0; }
-.final-remark-doaa { font-size: 1em; font-weight: 500; color: #1a5f7a; margin-top: 8px; font-style: italic; }
-.final-remark.belum { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 3px solid #e5942e; }
-.final-remark.belum .final-remark-title { font-size: 1.5em; font-weight: 700; color: #e65100; }
-/* GUGUR */
-.final-remark.gugur {
-    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-    border: 3px solid #d14343;
-}
-.final-remark.gugur .final-remark-title {
-    font-size: 2em;
-    font-weight: 800;
-    color: #c62828;
-    letter-spacing: 3px;
-}
+.final-remark-title { font-size: 2em; font-weight: 800; color: #1b5e20; }
+.final-remark.gugur .final-remark-title { color: #c62828; letter-spacing: 3px; }
+.final-remark-text { font-size: 1.2em; font-weight: 600; color: #2e7d32; }
+.final-remark-doaa { font-size: 1em; color: #1a5f7a; font-style: italic; margin-top: 8px; }
 @keyframes bounceEmoji { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
 
 .info-detail { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 15px; }
@@ -129,55 +134,3 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
     .final-remark-text { font-size: 1em; }
     .santri-name { font-size: 1.3em; }
 }
-/* Notif Jadwal */
-.notif {
-    margin-bottom: 20px;
-    border-radius: 15px;
-    padding: 20px 25px;
-    text-align: center;
-    animation: fadeIn 0.5s;
-}
-.notif.warning {
-    background: linear-gradient(135deg, #fff8e1, #ffecb3);
-    border: 3px solid #ff9800;
-}
-.notif.danger {
-    background: linear-gradient(135deg, #ffebee, #ffcdd2);
-    border: 3px solid #f44336;
-}
-.notif.info {
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-    border: 3px solid #2196f3;
-}
-.notif-icon { font-size: 2.5em; margin-bottom: 5px; }
-.notif-title { font-size: 1.5em; font-weight: 700; color: #333; margin: 5px 0; }
-.notif-text { font-size: 1em; color: #555; margin: 5px 0; }
-.notif-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 25px;
-    background: #22a06b;
-    color: white;
-    text-decoration: none;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 1em;
-    transition: all 0.3s;
-}
-.notif-btn:hover { background: #1a7f54; transform: scale(1.05); }
-.notif-deadline { font-size: 0.85em; color: #888; margin-top: 8px; }
-
-/* Final Remark */
-.final-remark.lanjut {
-    background: linear-gradient(135deg, #e8f5e9, #c8e6c9, #a5d6a7);
-    border: 3px solid #22a06b;
-    padding: 25px;
-    border-radius: 15px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-.final-remark-icon { font-size: 3em; animation: bounceEmoji 2s infinite; }
-.final-remark-title { font-size: 2em; font-weight: 800; color: #1b5e20; }
-.final-remark-text { font-size: 1.2em; font-weight: 600; color: #2e7d32; }
-.final-remark-doaa { font-size: 1em; color: #1a5f7a; font-style: italic; margin-top: 8px; }
-@keyframes bounceEmoji { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }

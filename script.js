@@ -1,11 +1,6 @@
-let allSantri = [];
+var allSantri = [];
 
-// ============================================================
-// 📅 JADWAL EVALUASI
-// EH: 24 jam (mulai 14:00) | EP: Sabtu 14:00 - Senin 14:00
-// EA: Rabu 18:00 - Sabtu 23:00
-// ============================================================
-const JADWAL = [
+var JADWAL = [
     { kode: 'EH01', mulai: '2026-04-06T14:00:00', akhir: '2026-04-07T14:00:00' },
     { kode: 'EH02', mulai: '2026-04-07T14:00:00', akhir: '2026-04-08T14:00:00' },
     { kode: 'EH03', mulai: '2026-04-08T14:00:00', akhir: '2026-04-09T14:00:00' },
@@ -39,19 +34,18 @@ const JADWAL = [
     { kode: 'EA',   mulai: '2026-05-13T18:00:00', akhir: '2026-05-16T23:00:00' }
 ];
 
-// ============================================================
 async function loadCSV() {
     try {
-        const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?output=csv';
-        const response = await fetch(GOOGLE_SHEETS_URL);
+        var GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?output=csv';
+        var response = await fetch(GOOGLE_SHEETS_URL);
         if (!response.ok) throw new Error('Gagal fetch: ' + response.status);
-        const csvText = await response.text();
-        const lines = csvText.split('\n');
-        const santriData = [];
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
+        var csvText = await response.text();
+        var lines = csvText.split('\n');
+        var santriData = [];
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
             if (!line) continue;
-            const firstPart = line.split(',')[0].trim();
+            var firstPart = line.split(',')[0].trim();
             if (/^\d+$/.test(firstPart) && firstPart !== '') santriData.push(line);
         }
         allSantri = santriData.map(function(line) { return parseSantriLine(line); }).filter(function(s) { return s !== null; });
@@ -130,30 +124,43 @@ function getNotifBelum(kode) {
         return '<div class="notif warning"><div class="notif-icon">⏳</div><div class="notif-title">Belum ' + kode + '</div><div class="notif-text">Yuk Ikhwah, Segera luangkan waktunya!</div><a href="https://edu.hsi.id" target="_blank" class="notif-btn">👉 Klik Edu.hsi.id</a><div class="notif-deadline">⏰ Berakhir: ' + formatTanggal(jadwal.akhir) + '</div></div>';
     } else if (status === 'belum_mulai') {
         return '<div class="notif info"><div class="notif-icon">🔜</div><div class="notif-title">Menunggu ' + kode + '</div><div class="notif-text">Dimulai: ' + formatTanggal(jadwal.mulai) + '</div></div>';
-    } else if (status === 'berakhir') {
-        return '<div class="notif danger"><div class="notif-icon">❌</div><div class="notif-title">Terlewat ' + kode + '</div><div class="notif-text">Evaluasi sudah berakhir</div></div>';
     }
     return '';
 }
 
-function cariEvaluasiBerikutnya(nilaiMap) {
+function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
     var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
+    
+    var remark = (finalRemark || '').trim().toLowerCase();
+    if (remark.includes('gugur') || remark.includes('tidak lulus')) {
+        return { kode: 'GUGUR', notif: '<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>' };
+    }
+    
+    var semuaSelesai = true;
     
     for (var i = 0; i < csvOrder.length; i++) {
         var kode = csvOrder[i];
         var nilai = nilaiMap[kode];
         var status = getJadwalStatus(kode);
         
-        if ((status === 'sedang_berlangsung' || status === 'berakhir') && (nilai === null || nilai === undefined)) {
+        if (nilai !== null && nilai !== undefined) continue;
+        
+        semuaSelesai = false;
+        
+        if (status === 'sedang_berlangsung') {
             return { kode: kode, notif: getNotifBelum(kode) };
         }
         
-        if (status === 'belum_mulai' && (nilai === null || nilai === undefined)) {
+        if (status === 'belum_mulai') {
             return { kode: kode, notif: getNotifBelum(kode) };
         }
     }
     
-    return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎉</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
+    if (semuaSelesai) {
+        return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
+    }
+    
+    return { kode: '-', notif: '' };
 }
 
 function searchSantri() {
@@ -200,7 +207,7 @@ function displayResult(s) {
         return '<span style="font-weight:600;">' + st + '</span>';
     };
     
-    var notifResult = cariEvaluasiBerikutnya(s.nilaiMap);
+    var notifResult = cariEvaluasiBerikutnya(s.nilaiMap, s.finalRemark);
     var notif = notifResult.notif;
     
     var getAngka = function(str) { var m = (str || '').trim().match(/^(\d+)/); return m ? parseInt(m[1]) : 0; };
@@ -211,7 +218,7 @@ function displayResult(s) {
     var formatDurasi = function(d) {
         if (isNaN(d)) return s.totalDurasi + ' detik';
         var m = Math.floor(d / 60); var det = Math.round(d % 60);
-        if (m > 0) return m + 'm ' + det + 'd (' + d.toLocaleString('id-ID') + ' detik)';
+        if (m > 0) return m + 'm ' + det + 'd';
         return d.toLocaleString('id-ID') + ' detik';
     };
 
