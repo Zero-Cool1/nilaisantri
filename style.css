@@ -1,3 +1,71 @@
+/* ===== HALAMAN PILIHAN ===== */
+.program-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.program-card {
+    background: white;
+    border: 3px solid #22a06b;
+    border-radius: 15px;
+    padding: 20px 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.program-card:hover {
+    background: #e8f5e9;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(34,160,107,0.2);
+    border-color: #1a7f54;
+}
+
+.program-card-icon {
+    font-size: 2.5em;
+    flex-shrink: 0;
+}
+
+.program-card-info {
+    text-align: left;
+    flex: 1;
+}
+
+.program-card-info .nama-program {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #1a5f7a;
+}
+
+.program-card-info .kode-program {
+    font-size: 0.85em;
+    color: #5a8fa8;
+}
+
+.btn-kembali {
+    display: block;
+    margin: 10px 0 15px 0;
+    padding: 10px 20px;
+    background: transparent;
+    color: #1a5f7a;
+    border: 2px solid #1a5f7a;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-kembali:hover {
+    background: #1a5f7a;
+    color: white;
+}
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
