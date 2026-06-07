@@ -76,7 +76,7 @@ var DAFTAR_PROGRAM = [
     {
         id: 'arn251-g15-s7',
         nama: 'ARN251 G15 - SILSILAH ILMIYYAH 7',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?output=csv', // URL lama
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=1171366230&single=true&output=csv', // URL lama
         icon: '📕'
     },
     {
