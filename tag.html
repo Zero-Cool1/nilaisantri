@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WA Tag Helper</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;padding:16px;max-width:600px;margin:0 auto}
+  h1{color:#075e54;font-size:22px}
+  .sub{color:#666;font-size:13px;margin-bottom:16px}
+  .card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  label{display:block;font-size:13px;font-weight:700;color:#444;margin-bottom:6px}
+  textarea{width:100%;min-height:140px;border:1px solid #ddd;border-radius:10px;padding:12px;font-size:15px;resize:vertical;font-family:inherit}
+  input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:14px;margin-top:6px}
+  .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px}
+  .btn-green{background:#075e54;color:#fff}
+  .btn-wa{background:#25d366;color:#fff}
+  .btn-gray{background:#e0e0e0;color:#333}
+  .result{background:#f6ffed;border:1px solid #b7eb8f;border-radius:10px;padding:14px;margin-top:12px;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word;display:none}
+  .result.show{display:block}
+  .info{font-size:12px;color:#888;margin-top:8px;line-height:1.5}
+  .warn{background:#fffbe6;border:1px solid #ffe082;border-radius:10px;padding:12px;font-size:12px;color:#795548;margin-bottom:14px}
+  .hidden{display:none}
+  hr{margin:14px 0;border:none;border-top:1px solid #eee}
+</style>
+</head>
+<body>
+
+<h1>🏷️ WA Tag Helper</h1>
+<p class="sub">Paste nama + nomor → Format mention siap pakai</p>
+
+<div class="warn">
+  <strong>Penting:</strong> WhatsApp <em>tidak bisa</em> membuat teks <code>@Nama</code> menjadi mention biru hanya dari copy-paste biasa. 
+  Yang bisa: <code>@628xxx</code> (anggota grup tetap dapat notif). 
+  Untuk tampilan biru sempurna, gunakan tombol <strong>"Kirim via Bot"</strong> di bawah.
+</div>
+
+<div class="card">
+  <label>📝 Paste Data</label>
+  <p class="info">Contoh hasil copy dari Excel / catatan:<br>
+  <code>1. Abu Fatih Timur Tengah 6285272380645</code><br>
+  <code>2. Budi Santoso 6285278238064</code></p>
+  <textarea id="inputData" placeholder="Paste di sini..."></textarea>
+  <button class="btn btn-green" onclick="convert()">🔄 Convert ke Format Mention</button>
+</div>
+
+<div class="card hidden" id="cardResult">
+  <label>📋 Hasil Copy-Paste</label>
+  <div class="result" id="resCopy"></div>
+  <button class="btn btn-wa" onclick="copyText()">📋 Copy Hasil</button>
+  <p class="info" id="msgCopy"></p>
+
+  <hr>
+
+  <label>🤖 Kirim Mention Biru via Bot</label>
+  <p class="info">Pastikan server bot Anda menyala dan Anda sudah login.</p>
+  <input type="text" id="grupId" placeholder="ID Grup, contoh: 123456789@g.us">
+  <input type="text" id="apiUrl" placeholder="URL API server bot" value="http://localhost:3000/api/kirim-grup">
+  <button class="btn btn-green" onclick="kirimBot()">📤 Kirim Pesan via Bot</button>
+  <div class="result hidden" id="resBot"></div>
+</div>
+
+<script>
+let rows = [];
+
+function parse(txt){
+  return txt.split('\n').map(l=>l.trim()).filter(l=>l).map(line=>{
+    // Hapus nomor urut di awal: 1.  1)  1-
+    let s = line.replace(/^\d+[\.\)\-]\s*/,'').trim();
+    // Format: "Nama [tab] 628xxx"
+    if(s.includes('\t')){
+      let p = s.split('\t').map(x=>x.trim());
+      let nomor = p[p.length-1].replace(/\D/g,'');
+      if(nomor.startsWith('62')) return {nama:p[0], nomor};
+    }
+    // Format: "Nama ... 628xxx" (nomor di akhir)
+    let m = s.match(/^(.*?)\s+(62\d{8,15})$/);
+    if(m) return {nama:m[1].trim(), nomor:m[2]};
+    // Cari nomor di mana saja
+    let nm = s.match(/(62\d{8,15})/);
+    if(nm){
+      let nama = s.replace(nm[1],'').replace(/^[\d\.\)\-\s]+/,'').trim();
+      return {nama, nomor:nm[1]};
+    }
+    return null;
+  }).filter(Boolean);
+}
+
+function convert(){
+  const raw = document.getElementById('inputData').value;
+  rows = parse(raw);
+  if(!rows.length){ alert('Tidak ada data valid. Pastikan setiap baris ada nomor 62xxx.'); return; }
+
+  const out = rows.map((r,i)=>`${i+1}. ${r.nama} @${r.nomor}`).join('\n');
+  document.getElementById('resCopy').textContent = out;
+  document.getElementById('resCopy').classList.add('show');
+  document.getElementById('cardResult').classList.remove('hidden');
+  document.getElementById('msgCopy').textContent = `${rows.length} orang ditemukan.`;
+}
+
+function copyText(){
+  const t = document.getElementById('resCopy').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    document.getElementById('msgCopy').innerHTML = '<strong>✅ Sudah dicopy!</strong> Paste di grup WA. Anggota yang nomornya tergabung akan muncul notif tag.';
+  });
+}
+
+async function kirimBot(){
+  const gid = document.getElementById('grupId').value.trim();
+  const url = document.getElementById('apiUrl').value.trim();
+  if(!gid){ alert('ID grup wajib diisi'); return; }
+  if(!url){ alert('URL API wajib diisi'); return; }
+
+  const box = document.getElementById('resBot');
+  box.classList.remove('hidden');
+  box.textContent = '⏳ Mengirim...';
+
+  const text = rows.map((r,i)=>`${i+1}. ${r.nama}`).join('\n');
+  const mentions = rows.map(r=>`${r.nomor}@s.whatsapp.net`);
+
+  try{
+    // Kirim ke endpoint bot. Gunakan cookie/session jika perlu.
+    const res = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      body: JSON.stringify({grupId:gid, text, mentions})
+    });
+    const j = await res.json().catch(()=>({}));
+    if(res.ok && !j.error){
+      box.style.background='#e3f2fd'; box.style.borderColor='#90caf9';
+      box.textContent = '✅ Mention biru berhasil dikirim via bot!';
+    }else{
+      box.style.background='#ffebee'; box.style.borderColor='#ef9a9a';
+      box.textContent = '❌ Gagal: ' + (j.error || res.statusText);
+    }
+  }catch(e){
+    box.style.background='#ffebee'; box.style.borderColor='#ef9a9a';
+    box.textContent = '❌ Error: ' + e.message;
+  }
+}
+</script>
+
+</body>
+</html>

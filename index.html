@@ -3,90 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nilai Santri ARN251 G15</title>
+    <title>Nilai Santri</title>
     
     <meta name="theme-color" content="#1a5f7a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Nilai HSI">
-    <meta name="description" content="Pencarian Nilai Santri ARN251 G15 - SILSILAH 7">
-    
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
-        <rect fill='%2322a06b' width='512' height='512' rx='100'/>
-        <text x='256' y='340' text-anchor='middle' fill='white' font-size='280' font-family='Arial' font-weight='bold'>🎓</text>
-        <text x='256' y='440' text-anchor='middle' fill='white' font-size='60' font-family='Arial' font-weight='bold'>NILAI</text>
-        <text x='256' y='485' text-anchor='middle' fill='white' font-size='40' font-family='Arial'>HSI</text>
-    </svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
-        <rect fill='%2322a06b' width='512' height='512' rx='100'/>
-        <text x='256' y='340' text-anchor='middle' fill='white' font-size='280' font-family='Arial' font-weight='bold'>🎓</text>
-        <text x='256' y='440' text-anchor='middle' fill='white' font-size='60' font-family='Arial' font-weight='bold'>NILAI</text>
-        <text x='256' y='485' text-anchor='middle' fill='white' font-size='40' font-family='Arial'>HSI</text>
-    </svg>">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-icon">🎓</div>
-            <h1>Nilai Santri</h1>
-            <p>ARN251 G15 - SILSILAH 7</p>
+    <div class="container" id="mainContainer">
+        <!-- HALAMAN PILIHAN PROGRAM -->
+        <div id="halamanPilihan">
+            <div class="header">
+                <div class="header-icon">🎓</div>
+                <h1>Nilai Santri</h1>
+                <p>Pilih Program Silsilah</p>
+            </div>
+            <div class="program-grid" id="programList"></div>
         </div>
 
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Ketik nama santri..." autocomplete="off">
-            <button onclick="searchSantri()">🔍 Cari</button>
+        <!-- HALAMAN PENCARIAN -->
+        <div id="halamanPencarian" style="display:none;">
+            <div class="header">
+                <div class="header-icon">🎓</div>
+                <h1>Nilai Santri</h1>
+                <p id="judulProgram">-</p>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Ketik nama santri..." autocomplete="off">
+                <button onclick="searchSantri()">🔍 Cari</button>
+            </div>
+            <button class="btn-kembali" onclick="kembaliKePilihan()">⬅ Kembali ke Pilihan Program</button>
+            <div id="totalSantri" class="total-info"></div>
+            <div id="suggestions" class="suggestions"></div>
+            <div id="result" class="result"></div>
         </div>
 
-        <div id="totalSantri" class="total-info"></div>
-        <div id="suggestions" class="suggestions"></div>
-        <div id="result" class="result"></div>
         <div id="loading" class="loading" style="display: none;"><p>⏳ Memuat data...</p></div>
         <div id="error" class="error" style="display: none;"></div>
     </div>
-
-    <div id="installPrompt" class="install-prompt" style="display: none;">
-        <div class="install-prompt-content">
-            <div class="install-icon">🎓</div>
-            <p>📱 Install aplikasi <strong>Nilai HSI</strong>?</p>
-            <button onclick="installApp()" class="install-btn">Install Sekarang</button>
-            <button onclick="closeInstallPrompt()" class="close-btn">Nanti Saja</button>
-        </div>
-    </div>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js').catch(function() {});
-            });
-        }
-        var deferredPrompt;
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredPrompt = e;
-            setTimeout(function() { document.getElementById('installPrompt').style.display = 'flex'; }, 2000);
-        });
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(function() {
-                    document.getElementById('installPrompt').style.display = 'none';
-                });
-            }
-        }
-        function closeInstallPrompt() {
-            document.getElementById('installPrompt').style.display = 'none';
-        }
-    </script>
 
     <script src="script.js"></script>
 </body>
