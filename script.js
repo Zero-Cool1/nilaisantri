@@ -46,7 +46,7 @@ var JADWAL_SILSILAH8 = [
 ];
 
 // ============================================================
-// 📋 DAFTAR PROGRAM (TAMBAHKAN DI SINI SETIAP ADA SILSILAH BARU)
+// 📋 DAFTAR PROGRAM (SILSILAH TERBARU DI ATAS)
 // ============================================================
 var DAFTAR_PROGRAM = [
     {
@@ -87,11 +87,8 @@ var DAFTAR_PROGRAM = [
     }
 ];
 
-// ============================================================
-// KONFIGURASI: Index program yang sedang berjalan (memiliki jadwal)
-// Saat menambah silsilah baru, update index ini ke program terbaru.
-// ============================================================
-var INDEX_PROGRAM_DENGAN_JADWAL = 5; // Saat ini index ke-5 (SILSILAH 8)
+// Indeks program yang memiliki jadwal (0-based). Saat ini index 5 = SILSILAH 8
+var INDEX_PROGRAM_DENGAN_JADWAL = 5;
 
 var currentProgram = null;
 var currentSheetUrl = '';
@@ -183,6 +180,7 @@ function formatTanggal(isoString) {
     return hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear() + ' jam ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ' WIB';
 }
 
+// Notif untuk BELUM mengerjakan (sedang berlangsung)
 function getNotifBelum(kode) {
     if (!currentJadwal) return '';
     var status = getJadwalStatus(kode);
@@ -190,19 +188,25 @@ function getNotifBelum(kode) {
     
     if (status === 'sedang_berlangsung') {
         return '<div class="notif warning"><div class="notif-icon">⏳</div><div class="notif-title">Belum ' + kode + '</div><div class="notif-text">Yuk Ikhwah, Segera luangkan waktunya!</div><a href="https://edu.hsi.id" target="_blank" class="notif-btn">👉 Klik Edu.hsi.id</a><div class="notif-deadline">⏰ Berakhir: ' + formatTanggal(jadwal.akhir) + '</div></div>';
-    } else if (status === 'belum_mulai') {
-        return '<div class="notif info"><div class="notif-icon">🔜</div><div class="notif-title">Menunggu ' + kode + '</div><div class="notif-text">Dimulai: ' + formatTanggal(jadwal.mulai) + '</div></div>';
     }
     return '';
 }
 
-// Cek apakah semua jadwal sudah berakhir (untuk memutuskan kapan GUGUR boleh tampil)
+// Notif untuk SUDAH mengerjakan (nilai > 0) atau TERLEWAT (nilai == 0)
+function getNotifSelesai(kode, nilai) {
+    if (nilai === 0) {
+        return '<div class="notif warning"><div class="notif-icon">⚠️</div><div class="notif-title">Alhamdulillah \'ala kulli hal</div><div class="notif-text">Antum terlewat ' + kode + '</div><div class="notif-doaa">Semoga Allah Ta\'ala mudahkan</div></div>';
+    }
+    return '<div class="notif success"><div class="notif-icon">✅</div><div class="notif-title">Alhamdulillah</div><div class="notif-text">Antum sudah ' + kode + '</div><div class="notif-doaa">Baarakallahu fiikum</div></div>';
+}
+
+// Cek apakah semua jadwal sudah berakhir
 function semuaJadwalBerakhir() {
     if (!currentJadwal) return true;
     var now = new Date();
     for (var i = 0; i < currentJadwal.length; i++) {
         var akhir = new Date(currentJadwal[i].akhir);
-        if (now < akhir) return false; // masih ada yang belum berakhir
+        if (now < akhir) return false;
     }
     return true;
 }
@@ -210,54 +214,48 @@ function semuaJadwalBerakhir() {
 function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
     var remark = (finalRemark || '').trim().toLowerCase();
     
-    // Cek GUGUR hanya jika SEMUA jadwal sudah berakhir (atau tidak ada jadwal)
+    // Cek GUGUR hanya jika SEMUA jadwal sudah berakhir
     if (remark.includes('gugur') || remark.includes('tidak lulus')) {
         if (!currentJadwal || semuaJadwalBerakhir()) {
-            return { kode: 'GUGUR', notif: '<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>' };
+            return { notif: '<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>' };
         }
-        // Jika jadwal masih berlangsung, jangan tampilkan GUGUR dulu, lanjut ke pengecekan jadwal
     }
 
-    // Jika tidak ada jadwal (program lama), tampilkan SELAMAT jika semua terisi
+    // Program lama tanpa jadwal
     if (!currentJadwal) {
-        var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
-        var semuaTerisi = true;
-        for (var i = 0; i < csvOrder.length; i++) {
-            if (nilaiMap[csvOrder[i]] === null || nilaiMap[csvOrder[i]] === undefined) {
-                semuaTerisi = false;
-                break;
-            }
-        }
-        if (semuaTerisi) {
-            return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH BERIKUTNYA</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
-        }
-        return { kode: '-', notif: '' };
+        return { notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">Data sudah lengkap</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
     }
 
-    // Ada jadwal (program terbaru)
+    // Program terbaru dengan jadwal
     var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
-    var semuaSelesai = true;
-
+    
     for (var i = 0; i < csvOrder.length; i++) {
         var kode = csvOrder[i];
         var nilai = nilaiMap[kode];
         var status = getJadwalStatus(kode);
 
-        if (nilai !== null && nilai !== undefined) continue;
-        semuaSelesai = false;
+        // Belum mulai -> lewati
+        if (status === 'belum_mulai') continue;
 
-        if (status === 'sedang_berlangsung') {
-            return { kode: kode, notif: getNotifBelum(kode) };
-        }
-        if (status === 'belum_mulai') {
-            return { kode: kode, notif: getNotifBelum(kode) };
+        // Sedang berlangsung atau sudah berakhir
+        if (status === 'sedang_berlangsung' || status === 'berakhir') {
+            // Sudah dikerjakan (nilai > 0)
+            if (nilai !== null && nilai !== undefined && nilai > 0) {
+                return { notif: getNotifSelesai(kode, nilai) };
+            }
+            // Terlewat (nilai 0)
+            if (nilai === 0) {
+                return { notif: getNotifSelesai(kode, 0) };
+            }
+            // Belum dikerjakan dan SEDANG BERLANGSUNG
+            if (status === 'sedang_berlangsung') {
+                return { notif: getNotifBelum(kode) };
+            }
         }
     }
 
-    if (semuaSelesai) {
-        return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
-    }
-    return { kode: '-', notif: '' };
+    // Semua sudah dikerjakan
+    return { notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
 }
 
 // ============================================================
@@ -351,10 +349,7 @@ function displayResult(s) {
     
     html += '<div class="list-nilai-section"><h3>📝 Nilai Santri ARN251 G15 <span style="font-size:0.7em;color:#5a8fa8;font-weight:400;">(Klik Kotak)</span></h3><div class="nilai-buttons">';
     html += buildNilaiButtons(s.nilaiMap);
-    html += '</div>';
-    // Tempat untuk notif Alhamdulillah setelah klik tombol
-    html += '<div id="notifKlik" class="notif-klik"></div>';
-    html += '</div></div>';
+    html += '</div></div></div>';
     
     resultDiv.innerHTML = html;
     resultDiv.style.display = 'block';
@@ -376,19 +371,13 @@ function buildNilaiButtons(nilaiMap) {
     return html;
 }
 
-// ============================================================
-// KLIK NILAI (dengan notif Alhamdulillah)
-// ============================================================
+// KLIK NILAI (tanpa notif di bawah)
 function klikNilai(btn, label, nilai) {
     var isShowing = btn.classList.contains('showing-value');
     if (isShowing) {
         btn.classList.remove('showing-value','nilai-0','nilai-1','nilai-2','nilai-3','nilai-4','active');
         btn.textContent = label;
-        // Hapus notif
-        var notifKlik = document.getElementById('notifKlik');
-        if (notifKlik) notifKlik.innerHTML = '';
     } else {
-        // Reset tombol lain
         var allBtns = document.querySelectorAll('.nilai-btn.showing-value');
         for (var i = 0; i < allBtns.length; i++) {
             var b = allBtns[i];
@@ -403,12 +392,6 @@ function klikNilai(btn, label, nilai) {
         else if (nilai === 3) btn.classList.add('nilai-3');
         else if (nilai >= 4) btn.classList.add('nilai-4');
         btn.textContent = nilai;
-        
-        // Tampilkan notif sukses di bawah tombol
-        var notifKlik = document.getElementById('notifKlik');
-        if (notifKlik) {
-            notifKlik.innerHTML = '<div class="notif success"><div class="notif-icon">✅</div><div class="notif-title">Alhamdulillah</div><div class="notif-text">Antum sudah ' + label + '</div><div class="notif-doaa">Baarakallahu fiikum</div></div>';
-        }
     }
 }
 
@@ -417,7 +400,7 @@ function klikNilai(btn, label, nilai) {
 // ============================================================
 function tampilkanPilihan() {
     var html = '';
-    // Loop dari belakang agar silsilah terbaru muncul paling atas
+    // Loop dari belakang agar terbaru di atas
     for (var i = DAFTAR_PROGRAM.length - 1; i >= 0; i--) {
         var prog = DAFTAR_PROGRAM[i];
         html += '<div class="program-card" onclick="pilihProgram(' + i + ')">';

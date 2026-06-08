@@ -1,71 +1,3 @@
-/* ===== HALAMAN PILIHAN ===== */
-.program-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.program-card {
-    background: white;
-    border: 3px solid #22a06b;
-    border-radius: 15px;
-    padding: 20px 25px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.program-card:hover {
-    background: #e8f5e9;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(34,160,107,0.2);
-    border-color: #1a7f54;
-}
-
-.program-card-icon {
-    font-size: 2.5em;
-    flex-shrink: 0;
-}
-
-.program-card-info {
-    text-align: left;
-    flex: 1;
-}
-
-.program-card-info .nama-program {
-    font-weight: 700;
-    font-size: 1.1em;
-    color: #1a5f7a;
-}
-
-.program-card-info .kode-program {
-    font-size: 0.85em;
-    color: #5a8fa8;
-}
-
-.btn-kembali {
-    display: block;
-    margin: 10px 0 15px 0;
-    padding: 10px 20px;
-    background: transparent;
-    color: #1a5f7a;
-    border: 2px solid #1a5f7a;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.btn-kembali:hover {
-    background: #1a5f7a;
-    color: white;
-}
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -146,6 +78,8 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
 .notif-btn { display: inline-block; margin-top: 10px; padding: 10px 25px; background: #22a06b; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1em; transition: all 0.3s; }
 .notif-btn:hover { background: #1a7f54; transform: scale(1.05); }
 .notif-deadline { font-size: 0.85em; color: #888; margin-top: 8px; }
+.notif-doaa { font-size: 0.9em; color: #2e7d32; font-style: italic; margin-top: 5px; }
+.notif.warning .notif-doaa { color: #e65100; }
 
 /* FINAL REMARK */
 .final-remark { margin-bottom: 20px; border-radius: 15px; padding: 25px; text-align: center; animation: fadeIn 0.5s; }
@@ -177,30 +111,57 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
 .nilai-btn.nilai-4 { background: #2e7d32 !important; border-color: #1b5e20 !important; color: #fff !important; font-weight: 700; }
 .nilai-btn.active { box-shadow: 0 0 0 2px rgba(34,160,107,0.5) !important; transform: scale(1.15); }
 
-.install-prompt { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; display: none; }
-.install-prompt-content { background: white; border-radius: 20px; padding: 25px 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
-.install-icon { font-size: 3em; }
-.install-btn { background: #22a06b; color: white; padding: 14px 35px; border: none; border-radius: 50px; font-size: 15px; cursor: pointer; font-weight: 600; width: 100%; }
-.close-btn { background: #f0f0f0; color: #888; padding: 10px 25px; border: none; border-radius: 50px; font-size: 13px; cursor: pointer; }
+/* PILIHAN PROGRAM */
+.program-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.program-card {
+    background: white;
+    border: 3px solid #22a06b;
+    border-radius: 15px;
+    padding: 20px 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.program-card:hover {
+    background: #e8f5e9;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(34,160,107,0.2);
+    border-color: #1a7f54;
+}
+.program-card-icon { font-size: 2.5em; flex-shrink: 0; }
+.program-card-info { text-align: left; flex: 1; }
+.program-card-info .nama-program { font-weight: 700; font-size: 1.1em; color: #1a5f7a; }
+.program-card-info .kode-program { font-size: 0.85em; color: #5a8fa8; }
+
+.btn-kembali {
+    display: block;
+    margin: 10px 0 15px 0;
+    padding: 10px 20px;
+    background: transparent;
+    color: #1a5f7a;
+    border: 2px solid #1a5f7a;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.btn-kembali:hover { background: #1a5f7a; color: white; }
 
 .loading,.error,.no-result { text-align: center; padding: 20px; margin-top: 15px; border-radius: 10px; }
 .loading { background: #e8f4f8; color: #5a8fa8; }
 .error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 .no-result { color: #5a8fa8; font-size: 1.1em; padding: 30px; }
 
-/* Notif sukses klik nilai */
-.notif-klik {
-    margin-top: 15px;
-}
-.notif-klik .notif {
-    margin-bottom: 0;
-}
-.notif-doaa {
-    font-size: 0.9em;
-    color: #2e7d32;
-    font-style: italic;
-    margin-top: 5px;
-}
 @media (max-width:768px) {
     .container { padding: 20px 15px; }
     .header h1 { font-size: 1.6em; }
@@ -214,17 +175,4 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
     .final-remark-title { font-size: 1.5em; }
     .final-remark-text { font-size: 1em; }
     .santri-name { font-size: 1.3em; }
-}
-/* Notif sukses klik nilai */
-.notif-klik {
-    margin-top: 15px;
-}
-.notif-klik .notif {
-    margin-bottom: 0;
-}
-.notif-doaa {
-    font-size: 0.9em;
-    color: #2e7d32;
-    font-style: italic;
-    margin-top: 5px;
 }
