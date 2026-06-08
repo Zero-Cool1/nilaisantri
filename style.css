@@ -188,6 +188,19 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
 .error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 .no-result { color: #5a8fa8; font-size: 1.1em; padding: 30px; }
 
+/* Notif sukses klik nilai */
+.notif-klik {
+    margin-top: 15px;
+}
+.notif-klik .notif {
+    margin-bottom: 0;
+}
+.notif-doaa {
+    font-size: 0.9em;
+    color: #2e7d32;
+    font-style: italic;
+    margin-top: 5px;
+}
 @media (max-width:768px) {
     .container { padding: 20px 15px; }
     .header h1 { font-size: 1.6em; }
