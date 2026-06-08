@@ -82,7 +82,7 @@ var DAFTAR_PROGRAM = [
     {
         id: 'arn251-g15-s8',
         nama: 'ARN251 G15 - SILSILAH ILMIYYAH 8',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/.../pub?output=csv',
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=56368600&single=true&output=csv',
         icon: '📒',
         jadwal: JADWAL_SILSILAH8
     }
