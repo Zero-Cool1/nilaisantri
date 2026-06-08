@@ -219,8 +219,8 @@ function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
 
     // Program lama tanpa jadwal
     if (!currentJadwal) {
-        return { notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">Data sudah lengkap</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
-    }
+        return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH BERIKUTNYA</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
+        }
 
     // Program terbaru dengan jadwal
     var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
