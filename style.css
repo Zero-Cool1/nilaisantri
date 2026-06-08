@@ -215,3 +215,16 @@ button:hover { background: #0d3b4f; transform: translateY(-2px); box-shadow: 0 5
     .final-remark-text { font-size: 1em; }
     .santri-name { font-size: 1.3em; }
 }
+/* Notif sukses klik nilai */
+.notif-klik {
+    margin-top: 15px;
+}
+.notif-klik .notif {
+    margin-bottom: 0;
+}
+.notif-doaa {
+    font-size: 0.9em;
+    color: #2e7d32;
+    font-style: italic;
+    margin-top: 5px;
+}

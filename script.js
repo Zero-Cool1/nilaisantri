@@ -1,7 +1,9 @@
 var allSantri = [];
 
 // ============================================================
-// 📋 DAFTAR PROGRAM
+// 📅 JADWAL SILSILAH 8 (TERBARU)
+// Pola: EH 24 jam (14:00-14:00), EP 48 jam (Sabtu 14:00 - Senin 14:00)
+// EA: 16 Juli 18:00 - 19 Juli 23:00
 // ============================================================
 var JADWAL_SILSILAH8 = [
     // Minggu 1
@@ -39,61 +41,64 @@ var JADWAL_SILSILAH8 = [
     { kode: 'EH24', mulai: '2026-07-09T14:00:00', akhir: '2026-07-10T14:00:00' },
     { kode: 'EH25', mulai: '2026-07-10T14:00:00', akhir: '2026-07-11T14:00:00' },
     { kode: 'EP5',  mulai: '2026-07-11T14:00:00', akhir: '2026-07-13T14:00:00' },
-    // EA
+    // EA (khusus)
     { kode: 'EA',   mulai: '2026-07-16T18:00:00', akhir: '2026-07-19T23:00:00' }
 ];
 
+// ============================================================
+// 📋 DAFTAR PROGRAM (TAMBAHKAN DI SINI SETIAP ADA SILSILAH BARU)
+// ============================================================
 var DAFTAR_PROGRAM = [
     {
         id: 'arn251-g12',
         nama: 'ARN251 G12 - SILSILAH ILMIYYAH 5.1',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/.../pub?output=csv',
-        icon: '📖',
-        jadwal: null
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=446500457&single=true&output=csv',
+        icon: '📖'
     },
     {
         id: 'arn251-g17',
         nama: 'ARN251 G17 - SILSILAH ILMIYYAH 5.2',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/.../pub?output=csv',
-        icon: '📗',
-        jadwal: null
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=301224816&single=true&output=csv',
+        icon: '📗'
     },
     {
         id: 'arn251-g22',
         nama: 'ARN251 G22 - SILSILAH ILMIYYAH 5.3',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/.../pub?output=csv',
-        icon: '📘',
-        jadwal: null
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=1931029663&single=true&output=csv',
+        icon: '📘'
     },
     {
         id: 'arn251-g15-s6',
         nama: 'ARN251 G15 - SILSILAH ILMIYYAH 6',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/.../pub?output=csv',
-        icon: '📙',
-        jadwal: null
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=76492603&single=true&output=csv',
+        icon: '📙'
     },
     {
         id: 'arn251-g15-s7',
         nama: 'ARN251 G15 - SILSILAH ILMIYYAH 7',
-        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?output=csv',
-        icon: '📕',
-        jadwal: null
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=1171366230&single=true&output=csv',
+        icon: '📕'
     },
     {
         id: 'arn251-g15-s8',
         nama: 'ARN251 G15 - SILSILAH ILMIYYAH 8',
         sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=56368600&single=true&output=csv',
-        icon: '📒',
-        jadwal: JADWAL_SILSILAH8
+        icon: '📒'
     }
 ];
+
+// ============================================================
+// KONFIGURASI: Index program yang sedang berjalan (memiliki jadwal)
+// Saat menambah silsilah baru, update index ini ke program terbaru.
+// ============================================================
+var INDEX_PROGRAM_DENGAN_JADWAL = 5; // Saat ini index ke-5 (SILSILAH 8)
 
 var currentProgram = null;
 var currentSheetUrl = '';
 var currentJadwal = null;
 
 // ============================================================
-// FUNGSI-FUNGSI
+// FUNGSI-FUNGSI UTAMA
 // ============================================================
 async function loadCSV() {
     try {
@@ -191,16 +196,32 @@ function getNotifBelum(kode) {
     return '';
 }
 
+// Cek apakah semua jadwal sudah berakhir (untuk memutuskan kapan GUGUR boleh tampil)
+function semuaJadwalBerakhir() {
+    if (!currentJadwal) return true;
+    var now = new Date();
+    for (var i = 0; i < currentJadwal.length; i++) {
+        var akhir = new Date(currentJadwal[i].akhir);
+        if (now < akhir) return false; // masih ada yang belum berakhir
+    }
+    return true;
+}
+
 function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
-    // Cek GUGUR dari finalRemark
     var remark = (finalRemark || '').trim().toLowerCase();
+    
+    // Cek GUGUR hanya jika SEMUA jadwal sudah berakhir (atau tidak ada jadwal)
     if (remark.includes('gugur') || remark.includes('tidak lulus')) {
-        return { kode: 'GUGUR', notif: '<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>' };
+        if (!currentJadwal || semuaJadwalBerakhir()) {
+            return { kode: 'GUGUR', notif: '<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>' };
+        }
+        // Jika jadwal masih berlangsung, jangan tampilkan GUGUR dulu, lanjut ke pengecekan jadwal
     }
 
+    // Jika tidak ada jadwal (program lama), tampilkan SELAMAT jika semua terisi
     if (!currentJadwal) {
-        var semuaTerisi = true;
         var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
+        var semuaTerisi = true;
         for (var i = 0; i < csvOrder.length; i++) {
             if (nilaiMap[csvOrder[i]] === null || nilaiMap[csvOrder[i]] === undefined) {
                 semuaTerisi = false;
@@ -208,11 +229,12 @@ function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
             }
         }
         if (semuaTerisi) {
-            return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH 8</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
+            return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH BERIKUTNYA</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
         }
         return { kode: '-', notif: '' };
     }
 
+    // Ada jadwal (program terbaru)
     var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
     var semuaSelesai = true;
 
@@ -330,7 +352,8 @@ function displayResult(s) {
     html += '<div class="list-nilai-section"><h3>📝 Nilai Santri ARN251 G15 <span style="font-size:0.7em;color:#5a8fa8;font-weight:400;">(Klik Kotak)</span></h3><div class="nilai-buttons">';
     html += buildNilaiButtons(s.nilaiMap);
     html += '</div>';
-    html += '<div id="notifKlik" class="notif-klik"></div>'; // Tempat notif sukses
+    // Tempat untuk notif Alhamdulillah setelah klik tombol
+    html += '<div id="notifKlik" class="notif-klik"></div>';
     html += '</div></div>';
     
     resultDiv.innerHTML = html;
@@ -354,18 +377,18 @@ function buildNilaiButtons(nilaiMap) {
 }
 
 // ============================================================
-// KLIK NILAI (dengan notif sukses)
+// KLIK NILAI (dengan notif Alhamdulillah)
 // ============================================================
 function klikNilai(btn, label, nilai) {
     var isShowing = btn.classList.contains('showing-value');
     if (isShowing) {
         btn.classList.remove('showing-value','nilai-0','nilai-1','nilai-2','nilai-3','nilai-4','active');
         btn.textContent = label;
-        // Hapus notif sukses
+        // Hapus notif
         var notifKlik = document.getElementById('notifKlik');
         if (notifKlik) notifKlik.innerHTML = '';
     } else {
-        // Reset semua tombol lain
+        // Reset tombol lain
         var allBtns = document.querySelectorAll('.nilai-btn.showing-value');
         for (var i = 0; i < allBtns.length; i++) {
             var b = allBtns[i];
@@ -381,7 +404,7 @@ function klikNilai(btn, label, nilai) {
         else if (nilai >= 4) btn.classList.add('nilai-4');
         btn.textContent = nilai;
         
-        // Tampilkan notif sukses
+        // Tampilkan notif sukses di bawah tombol
         var notifKlik = document.getElementById('notifKlik');
         if (notifKlik) {
             notifKlik.innerHTML = '<div class="notif success"><div class="notif-icon">✅</div><div class="notif-title">Alhamdulillah</div><div class="notif-text">Antum sudah ' + label + '</div><div class="notif-doaa">Baarakallahu fiikum</div></div>';
@@ -390,11 +413,12 @@ function klikNilai(btn, label, nilai) {
 }
 
 // ============================================================
-// PILIHAN PROGRAM
+// PILIHAN PROGRAM (SILSILAH TERBARU DI ATAS)
 // ============================================================
 function tampilkanPilihan() {
     var html = '';
-    for (var i = 0; i < DAFTAR_PROGRAM.length; i++) {
+    // Loop dari belakang agar silsilah terbaru muncul paling atas
+    for (var i = DAFTAR_PROGRAM.length - 1; i >= 0; i--) {
         var prog = DAFTAR_PROGRAM[i];
         html += '<div class="program-card" onclick="pilihProgram(' + i + ')">';
         html += '<span class="program-card-icon">' + prog.icon + '</span>';
@@ -409,7 +433,8 @@ function tampilkanPilihan() {
 function pilihProgram(index) {
     currentProgram = DAFTAR_PROGRAM[index];
     currentSheetUrl = currentProgram.sheetUrl;
-    currentJadwal = currentProgram.jadwal || null;
+    // Hanya program dengan index tertentu yang memiliki jadwal
+    currentJadwal = (index === INDEX_PROGRAM_DENGAN_JADWAL) ? JADWAL_SILSILAH8 : null;
     
     document.getElementById('halamanPilihan').style.display = 'none';
     document.getElementById('halamanPencarian').style.display = 'block';
