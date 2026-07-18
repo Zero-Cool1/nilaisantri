@@ -4,7 +4,7 @@ var currentSantriData = null; // Data santri yang sedang ditampilkan
 // ============================================================
 // 📅 JADWAL SILSILAH 8 (TERBARU)
 // Pola: EH 24 jam (14:00-14:00), EP 48 jam (Sabtu 14:00 - Senin 14:00)
-// EA: 16 Juli 18:00 - 19 Juli 23:00
+// EA: 15 Juli 18:00 - 15 Juli 23:00
 // ============================================================
 var JADWAL_SILSILAH8 = [
     // Minggu 1
