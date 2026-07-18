@@ -210,19 +210,17 @@ function semuaJadwalBerakhir() {
 function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
     var remark = (finalRemark || '').trim().toLowerCase();
     
-    // Cek GUGUR hanya jika SEMUA jadwal sudah berakhir (atau tidak ada jadwal)
-    if (remark.includes('gugur') || remark.includes('tidak lulus')) {
-        if (!currentJadwal || semuaJadwalBerakhir()) {
+    // Jika tidak ada jadwal (program lama) atau SEMUA jadwal sudah berakhir
+    if (!currentJadwal || semuaJadwalBerakhir()) {
+        // Cek GUGUR dari finalRemark
+        if (remark.includes('gugur') || remark.includes('tidak lulus')) {
             return { notif: '<div class="final-remark gugur"><div class="final-remark-title">GUGUR</div></div>' };
         }
+        // Jika tidak gugur, tampilkan SELAMAT
+        return { notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH BERIKUTNYA</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
     }
 
-    // Program lama tanpa jadwal
-    if (!currentJadwal) {
-        return { kode: 'SELESAI', notif: '<div class="final-remark lanjut"><div class="final-remark-icon">🎓</div><div class="final-remark-title">SELAMAT</div><div class="final-remark-text">ANTUM LANJUT KE SILSILAH BERIKUTNYA</div><div class="final-remark-doaa">BAARAKALLAHU FIIKUM</div></div>' };
-        }
-
-    // Program terbaru dengan jadwal
+    // === HANYA JIKA JADWAL MASIH BERLANGSUNG ===
     var csvOrder = ['EH01','EH02','EH03','EH04','EH05','EP1','EH06','EH07','EH08','EH09','EH10','EP2','EH11','EH12','EH13','EH14','EH15','EP3','EH16','EH17','EH18','EH19','EH20','EP4','EH21','EH22','EH23','EH24','EH25','EP5','EA'];
     
     // Cari evaluasi yang sedang berlangsung dan BELUM dikerjakan
@@ -245,7 +243,7 @@ function cariEvaluasiBerikutnya(nilaiMap, finalRemark) {
         }
     }
 
-    // Jika semua belum mulai
+    // Fallback (seharusnya tidak sampai sini)
     return { notif: '' };
 }
 
