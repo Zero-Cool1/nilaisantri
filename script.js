@@ -2,48 +2,48 @@ var allSantri = [];
 var currentSantriData = null; // Data santri yang sedang ditampilkan
 
 // ============================================================
-// 📅 JADWAL SILSILAH 8 (TERBARU)
-// Pola: EH 24 jam (14:00-14:00), EP 48 jam (Sabtu 14:00 - Senin 14:00)
-// EA: 15 Juli 18:00 - 15 Juli 23:00
+// 📅 JADWAL SILSILAH 9 (TERBARU)
+// Pola: EH 24 jam (17:00-17:00), EP 48 jam (Sabtu 17:00 - Senin 17:00)
+// EA: 30 September 18:00 - 3 Oktober 23:00
 // ============================================================
-var JADWAL_SILSILAH8 = [
+var JADWAL_SILSILAH9 = [
     // Minggu 1
-    { kode: 'EH01', mulai: '2026-06-08T14:00:00', akhir: '2026-06-09T14:00:00' },
-    { kode: 'EH02', mulai: '2026-06-09T14:00:00', akhir: '2026-06-10T14:00:00' },
-    { kode: 'EH03', mulai: '2026-06-10T14:00:00', akhir: '2026-06-11T14:00:00' },
-    { kode: 'EH04', mulai: '2026-06-11T14:00:00', akhir: '2026-06-12T14:00:00' },
-    { kode: 'EH05', mulai: '2026-06-12T14:00:00', akhir: '2026-06-13T14:00:00' },
-    { kode: 'EP1',  mulai: '2026-06-13T14:00:00', akhir: '2026-06-15T14:00:00' },
+    { kode: 'EH01', mulai: '2026-08-24T17:00:00', akhir: '2026-08-25T17:00:00' },
+    { kode: 'EH02', mulai: '2026-08-25T17:00:00', akhir: '2026-08-26T17:00:00' },
+    { kode: 'EH03', mulai: '2026-08-26T17:00:00', akhir: '2026-08-27T17:00:00' },
+    { kode: 'EH04', mulai: '2026-08-27T17:00:00', akhir: '2026-08-28T17:00:00' },
+    { kode: 'EH05', mulai: '2026-08-28T17:00:00', akhir: '2026-08-29T17:00:00' },
+    { kode: 'EP1',  mulai: '2026-08-29T17:00:00', akhir: '2026-08-31T17:00:00' },
     // Minggu 2
-    { kode: 'EH06', mulai: '2026-06-15T14:00:00', akhir: '2026-06-16T14:00:00' },
-    { kode: 'EH07', mulai: '2026-06-16T14:00:00', akhir: '2026-06-17T14:00:00' },
-    { kode: 'EH08', mulai: '2026-06-17T14:00:00', akhir: '2026-06-18T14:00:00' },
-    { kode: 'EH09', mulai: '2026-06-18T14:00:00', akhir: '2026-06-19T14:00:00' },
-    { kode: 'EH10', mulai: '2026-06-19T14:00:00', akhir: '2026-06-20T14:00:00' },
-    { kode: 'EP2',  mulai: '2026-06-20T14:00:00', akhir: '2026-06-22T14:00:00' },
+    { kode: 'EH06', mulai: '2026-08-31T17:00:00', akhir: '2026-09-01T17:00:00' },
+    { kode: 'EH07', mulai: '2026-09-01T17:00:00', akhir: '2026-09-02T17:00:00' },
+    { kode: 'EH08', mulai: '2026-09-02T17:00:00', akhir: '2026-09-03T17:00:00' },
+    { kode: 'EH09', mulai: '2026-09-03T17:00:00', akhir: '2026-09-04T17:00:00' },
+    { kode: 'EH10', mulai: '2026-09-04T17:00:00', akhir: '2026-09-05T17:00:00' },
+    { kode: 'EP2',  mulai: '2026-09-05T17:00:00', akhir: '2026-09-07T17:00:00' },
     // Minggu 3
-    { kode: 'EH11', mulai: '2026-06-22T14:00:00', akhir: '2026-06-23T14:00:00' },
-    { kode: 'EH12', mulai: '2026-06-23T14:00:00', akhir: '2026-06-24T14:00:00' },
-    { kode: 'EH13', mulai: '2026-06-24T14:00:00', akhir: '2026-06-25T14:00:00' },
-    { kode: 'EH14', mulai: '2026-06-25T14:00:00', akhir: '2026-06-26T14:00:00' },
-    { kode: 'EH15', mulai: '2026-06-26T14:00:00', akhir: '2026-06-27T14:00:00' },
-    { kode: 'EP3',  mulai: '2026-06-27T14:00:00', akhir: '2026-06-29T14:00:00' },
+    { kode: 'EH11', mulai: '2026-09-07T17:00:00', akhir: '2026-09-08T17:00:00' },
+    { kode: 'EH12', mulai: '2026-09-08T17:00:00', akhir: '2026-09-09T17:00:00' },
+    { kode: 'EH13', mulai: '2026-09-09T17:00:00', akhir: '2026-09-10T17:00:00' },
+    { kode: 'EH14', mulai: '2026-09-10T17:00:00', akhir: '2026-09-11T17:00:00' },
+    { kode: 'EH15', mulai: '2026-09-11T17:00:00', akhir: '2026-09-12T17:00:00' },
+    { kode: 'EP3',  mulai: '2026-09-12T17:00:00', akhir: '2026-09-14T17:00:00' },
     // Minggu 4
-    { kode: 'EH16', mulai: '2026-06-29T14:00:00', akhir: '2026-06-30T14:00:00' },
-    { kode: 'EH17', mulai: '2026-06-30T14:00:00', akhir: '2026-07-01T14:00:00' },
-    { kode: 'EH18', mulai: '2026-07-01T14:00:00', akhir: '2026-07-02T14:00:00' },
-    { kode: 'EH19', mulai: '2026-07-02T14:00:00', akhir: '2026-07-03T14:00:00' },
-    { kode: 'EH20', mulai: '2026-07-03T14:00:00', akhir: '2026-07-04T14:00:00' },
-    { kode: 'EP4',  mulai: '2026-07-04T14:00:00', akhir: '2026-07-06T14:00:00' },
+    { kode: 'EH16', mulai: '2026-09-14T17:00:00', akhir: '2026-09-15T17:00:00' },
+    { kode: 'EH17', mulai: '2026-09-15T17:00:00', akhir: '2026-09-16T17:00:00' },
+    { kode: 'EH18', mulai: '2026-09-16T17:00:00', akhir: '2026-09-17T17:00:00' },
+    { kode: 'EH19', mulai: '2026-09-17T17:00:00', akhir: '2026-09-18T17:00:00' },
+    { kode: 'EH20', mulai: '2026-09-18T17:00:00', akhir: '2026-09-19T17:00:00' },
+    { kode: 'EP4',  mulai: '2026-09-19T17:00:00', akhir: '2026-09-21T17:00:00' },
     // Minggu 5
-    { kode: 'EH21', mulai: '2026-07-06T14:00:00', akhir: '2026-07-07T14:00:00' },
-    { kode: 'EH22', mulai: '2026-07-07T14:00:00', akhir: '2026-07-08T14:00:00' },
-    { kode: 'EH23', mulai: '2026-07-08T14:00:00', akhir: '2026-07-09T14:00:00' },
-    { kode: 'EH24', mulai: '2026-07-09T14:00:00', akhir: '2026-07-10T14:00:00' },
-    { kode: 'EH25', mulai: '2026-07-10T14:00:00', akhir: '2026-07-11T14:00:00' },
-    { kode: 'EP5',  mulai: '2026-07-11T14:00:00', akhir: '2026-07-13T14:00:00' },
+    { kode: 'EH21', mulai: '2026-09-21T17:00:00', akhir: '2026-09-22T17:00:00' },
+    { kode: 'EH22', mulai: '2026-09-22T17:00:00', akhir: '2026-09-23T17:00:00' },
+    { kode: 'EH23', mulai: '2026-09-23T17:00:00', akhir: '2026-09-24T17:00:00' },
+    { kode: 'EH24', mulai: '2026-09-24T17:00:00', akhir: '2026-09-25T17:00:00' },
+    { kode: 'EH25', mulai: '2026-09-25T17:00:00', akhir: '2026-09-26T17:00:00' },
+    { kode: 'EP5',  mulai: '2026-09-26T17:00:00', akhir: '2026-09-28T17:00:00' },
     // EA (khusus)
-    { kode: 'EA',   mulai: '2026-07-15T18:00:00', akhir: '2026-07-18T23:00:00' }
+    { kode: 'EA',   mulai: '2026-09-30T18:00:00', akhir: '2026-10-03T23:00:00' }
 ];
 
 // ============================================================
@@ -85,11 +85,17 @@ var DAFTAR_PROGRAM = [
         nama: 'ARN251 G15 - SILSILAH ILMIYYAH 8',
         sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=56368600&single=true&output=csv',
         icon: '📒'
+    },
+    {
+        id: 'arn251-g15-s9',
+        nama: 'ARN251 G15 - SILSILAH ILMIYYAH 9',
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2lZ3HqI5SiNWJjd_-at4gO9kiTQi4AxoEj-afFK90nPNLlUC4YkTFfgJzJ0garsROlI9ClHrWV6d9/pub?gid=317453845&single=true&output=csv', // GANTI dengan URL sheet SILSILAH 9
+        icon: '📓'
     }
 ];
 
-// Indeks program yang memiliki jadwal (0-based). Saat ini index 5 = SILSILAH 8
-var INDEX_PROGRAM_DENGAN_JADWAL = 5;
+// Indeks program yang memiliki jadwal (0-based). Saat ini index 6 = SILSILAH 9
+var INDEX_PROGRAM_DENGAN_JADWAL = 6;
 
 var currentProgram = null;
 var currentSheetUrl = '';
@@ -434,7 +440,7 @@ function tampilkanPilihan() {
 function pilihProgram(index) {
     currentProgram = DAFTAR_PROGRAM[index];
     currentSheetUrl = currentProgram.sheetUrl;
-    currentJadwal = (index === INDEX_PROGRAM_DENGAN_JADWAL) ? JADWAL_SILSILAH8 : null;
+    currentJadwal = (index === INDEX_PROGRAM_DENGAN_JADWAL) ? JADWAL_SILSILAH9 : null;
     
     document.getElementById('halamanPilihan').style.display = 'none';
     document.getElementById('halamanPencarian').style.display = 'block';
